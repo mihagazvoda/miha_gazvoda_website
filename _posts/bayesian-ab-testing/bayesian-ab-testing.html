@@ -7,7 +7,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
   <meta name="generator" content="distill" />
-  <link rel="alternate" type="application/rss+xml" href="https://mihagazvoda.com/index.xml" />
 
   <style type="text/css">
   /* Hide doc at startup (prevent jankiness while JS renders/transforms) */
@@ -86,376 +85,39 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
 
   <!--radix_placeholder_meta_tags-->
-  <title>Miha Gazvoda: </title>
+  <title>Bayesian AB Testing</title>
+
+  <meta property="description" itemprop="description" content="A short description of the post."/>
 
 
-
+  <!--  https://schema.org/Article -->
+  <meta property="article:published" itemprop="datePublished" content="2021-04-17"/>
+  <meta property="article:created" itemprop="dateCreated" content="2021-04-17"/>
+  <meta name="article:author" content="Miha Gazvoda"/>
 
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
-  <meta property="og:title" content="Miha Gazvoda: "/>
+  <meta property="og:title" content="Bayesian AB Testing"/>
   <meta property="og:type" content="article"/>
+  <meta property="og:description" content="A short description of the post."/>
   <meta property="og:locale" content="en_US"/>
-  <meta property="og:site_name" content="Miha Gazvoda"/>
 
   <!--  https://dev.twitter.com/cards/types/summary -->
   <meta property="twitter:card" content="summary"/>
-  <meta property="twitter:title" content="Miha Gazvoda: "/>
+  <meta property="twitter:title" content="Bayesian AB Testing"/>
+  <meta property="twitter:description" content="A short description of the post."/>
 
   <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","site","listing"]}},"value":[{"type":"character","attributes":{},"value":[""]},{"type":"character","attributes":{},"value":["distill::distill_website"]},{"type":"character","attributes":{},"value":["posts"]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","categories","output"]}},"value":[{"type":"character","attributes":{},"value":["Bayesian AB Testing"]},{"type":"character","attributes":{},"value":["A short description of the post.\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url"]}},"value":[{"type":"character","attributes":{},"value":["Miha Gazvoda"]},{"type":"character","attributes":{},"value":["https://mihagazvoda.com"]}]}]},{"type":"character","attributes":{},"value":["04-17-2021"]},{"type":"character","attributes":{},"value":["R","data science","Bayesian"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
-  <!--radix_placeholder_navigation_in_header-->
-  <meta name="distill:offset" content=""/>
-
-  <script type="application/javascript">
-
-    window.headroom_prevent_pin = false;
-
-    window.document.addEventListener("DOMContentLoaded", function (event) {
-
-      // initialize headroom for banner
-      var header = $('header').get(0);
-      var headerHeight = header.offsetHeight;
-      var headroom = new Headroom(header, {
-        tolerance: 5,
-        onPin : function() {
-          if (window.headroom_prevent_pin) {
-            window.headroom_prevent_pin = false;
-            headroom.unpin();
-          }
-        }
-      });
-      headroom.init();
-      if(window.location.hash)
-        headroom.unpin();
-      $(header).addClass('headroom--transition');
-
-      // offset scroll location for banner on hash change
-      // (see: https://github.com/WickyNilliams/headroom.js/issues/38)
-      window.addEventListener("hashchange", function(event) {
-        window.scrollTo(0, window.pageYOffset - (headerHeight + 25));
-      });
-
-      // responsive menu
-      $('.distill-site-header').each(function(i, val) {
-        var topnav = $(this);
-        var toggle = topnav.find('.nav-toggle');
-        toggle.on('click', function() {
-          topnav.toggleClass('responsive');
-        });
-      });
-
-      // nav dropdowns
-      $('.nav-dropbtn').click(function(e) {
-        $(this).next('.nav-dropdown-content').toggleClass('nav-dropdown-active');
-        $(this).parent().siblings('.nav-dropdown')
-           .children('.nav-dropdown-content').removeClass('nav-dropdown-active');
-      });
-      $("body").click(function(e){
-        $('.nav-dropdown-content').removeClass('nav-dropdown-active');
-      });
-      $(".nav-dropdown").click(function(e){
-        e.stopPropagation();
-      });
-    });
+  
+  <script type="text/json" id="radix-resource-manifest">
+  {"type":"NULL"}
   </script>
-
-  <style type="text/css">
-
-  /* Theme (user-documented overrideables for nav appearance) */
-
-  .distill-site-nav {
-    color: rgba(255, 255, 255, 0.8);
-    background-color: #0F2E3D;
-    font-size: 15px;
-    font-weight: 300;
-  }
-
-  .distill-site-nav a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .distill-site-nav a:hover {
-    color: white;
-  }
-
-  @media print {
-    .distill-site-nav {
-      display: none;
-    }
-  }
-
-  .distill-site-header {
-
-  }
-
-  .distill-site-footer {
-
-  }
-
-
-  /* Site Header */
-
-  .distill-site-header {
-    width: 100%;
-    box-sizing: border-box;
-    z-index: 3;
-  }
-
-  .distill-site-header .nav-left {
-    display: inline-block;
-    margin-left: 8px;
-  }
-
-  @media screen and (max-width: 768px) {
-    .distill-site-header .nav-left {
-      margin-left: 0;
-    }
-  }
-
-
-  .distill-site-header .nav-right {
-    float: right;
-    margin-right: 8px;
-  }
-
-  .distill-site-header a,
-  .distill-site-header .title {
-    display: inline-block;
-    text-align: center;
-    padding: 14px 10px 14px 10px;
-  }
-
-  .distill-site-header .title {
-    font-size: 18px;
-    min-width: 150px;
-  }
-
-  .distill-site-header .logo {
-    padding: 0;
-  }
-
-  .distill-site-header .logo img {
-    display: none;
-    max-height: 20px;
-    width: auto;
-    margin-bottom: -4px;
-  }
-
-  .distill-site-header .nav-image img {
-    max-height: 18px;
-    width: auto;
-    display: inline-block;
-    margin-bottom: -3px;
-  }
-
-
-
-  @media screen and (min-width: 1000px) {
-    .distill-site-header .logo img {
-      display: inline-block;
-    }
-    .distill-site-header .nav-left {
-      margin-left: 20px;
-    }
-    .distill-site-header .nav-right {
-      margin-right: 20px;
-    }
-    .distill-site-header .title {
-      padding-left: 12px;
-    }
-  }
-
-
-  .distill-site-header .nav-toggle {
-    display: none;
-  }
-
-  .nav-dropdown {
-    display: inline-block;
-    position: relative;
-  }
-
-  .nav-dropdown .nav-dropbtn {
-    border: none;
-    outline: none;
-    color: rgba(255, 255, 255, 0.8);
-    padding: 16px 10px;
-    background-color: transparent;
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: inherit;
-    margin: 0;
-    margin-top: 1px;
-    z-index: 2;
-  }
-
-  .nav-dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: white;
-    min-width: 200px;
-    border: 1px solid rgba(0,0,0,0.15);
-    border-radius: 4px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
-    z-index: 1;
-    margin-top: 2px;
-    white-space: nowrap;
-    padding-top: 4px;
-    padding-bottom: 4px;
-  }
-
-  .nav-dropdown-content hr {
-    margin-top: 4px;
-    margin-bottom: 4px;
-    border: none;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  }
-
-  .nav-dropdown-active {
-    display: block;
-  }
-
-  .nav-dropdown-content a, .nav-dropdown-content .nav-dropdown-header {
-    color: black;
-    padding: 6px 24px;
-    text-decoration: none;
-    display: block;
-    text-align: left;
-  }
-
-  .nav-dropdown-content .nav-dropdown-header {
-    display: block;
-    padding: 5px 24px;
-    padding-bottom: 0;
-    text-transform: uppercase;
-    font-size: 14px;
-    color: #999999;
-    white-space: nowrap;
-  }
-
-  .nav-dropdown:hover .nav-dropbtn {
-    color: white;
-  }
-
-  .nav-dropdown-content a:hover {
-    background-color: #ddd;
-    color: black;
-  }
-
-  .nav-right .nav-dropdown-content {
-    margin-left: -45%;
-    right: 0;
-  }
-
-  @media screen and (max-width: 768px) {
-    .distill-site-header a, .distill-site-header .nav-dropdown  {display: none;}
-    .distill-site-header a.nav-toggle {
-      float: right;
-      display: block;
-    }
-    .distill-site-header .title {
-      margin-left: 0;
-    }
-    .distill-site-header .nav-right {
-      margin-right: 0;
-    }
-    .distill-site-header {
-      overflow: hidden;
-    }
-    .nav-right .nav-dropdown-content {
-      margin-left: 0;
-    }
-  }
-
-
-  @media screen and (max-width: 768px) {
-    .distill-site-header.responsive {position: relative; min-height: 500px; }
-    .distill-site-header.responsive a.nav-toggle {
-      position: absolute;
-      right: 0;
-      top: 0;
-    }
-    .distill-site-header.responsive a,
-    .distill-site-header.responsive .nav-dropdown {
-      display: block;
-      text-align: left;
-    }
-    .distill-site-header.responsive .nav-left,
-    .distill-site-header.responsive .nav-right {
-      width: 100%;
-    }
-    .distill-site-header.responsive .nav-dropdown {float: none;}
-    .distill-site-header.responsive .nav-dropdown-content {position: relative;}
-    .distill-site-header.responsive .nav-dropdown .nav-dropbtn {
-      display: block;
-      width: 100%;
-      text-align: left;
-    }
-  }
-
-  /* Site Footer */
-
-  .distill-site-footer {
-    width: 100%;
-    overflow: hidden;
-    box-sizing: border-box;
-    z-index: 3;
-    margin-top: 30px;
-    padding-top: 30px;
-    padding-bottom: 30px;
-    text-align: center;
-  }
-
-  /* Headroom */
-
-  d-title {
-    padding-top: 6rem;
-  }
-
-  @media print {
-    d-title {
-      padding-top: 4rem;
-    }
-  }
-
-  .headroom {
-    z-index: 1000;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-  }
-
-  .headroom--transition {
-    transition: all .4s ease-in-out;
-  }
-
-  .headroom--unpinned {
-    top: -100px;
-  }
-
-  .headroom--pinned {
-    top: 0;
-  }
-
-  /* adjust viewport for navbar height */
-  /* helps vertically center bootstrap (non-distill) content */
-  .min-vh-100 {
-    min-height: calc(100vh - 100px) !important;
-  }
-
-  </style>
-
-  <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
-  <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
-  <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
-  <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
+  <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
   <!--radix_placeholder_distill-->
 
@@ -1771,511 +1433,90 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </script>
 
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.7/header-attrs.js"></script>
-  <script src="site_libs/popper-2.6.0/popper.min.js"></script>
-  <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
-  <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
-  <script src="site_libs/tippy-6.2.7/tippy.umd.min.js"></script>
-  <script src="site_libs/anchor-4.2.2/anchor.min.js"></script>
-  <script src="site_libs/bowser-1.9.3/bowser.min.js"></script>
-  <script src="site_libs/webcomponents-2.0.0/webcomponents.js"></script>
-  <script src="site_libs/distill-2.2.21/template.v2.js"></script>
+  <script src="bayesian-ab-testing_files/header-attrs-2.7/header-attrs.js"></script>
+  <script src="bayesian-ab-testing_files/jquery-1.11.3/jquery.min.js"></script>
+  <script src="bayesian-ab-testing_files/popper-2.6.0/popper.min.js"></script>
+  <link href="bayesian-ab-testing_files/tippy-6.2.7/tippy.css" rel="stylesheet" />
+  <link href="bayesian-ab-testing_files/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
+  <script src="bayesian-ab-testing_files/tippy-6.2.7/tippy.umd.min.js"></script>
+  <script src="bayesian-ab-testing_files/anchor-4.2.2/anchor.min.js"></script>
+  <script src="bayesian-ab-testing_files/bowser-1.9.3/bowser.min.js"></script>
+  <script src="bayesian-ab-testing_files/webcomponents-2.0.0/webcomponents.js"></script>
+  <script src="bayesian-ab-testing_files/distill-2.2.21/template.v2.js"></script>
   <!--radix_placeholder_site_in_header-->
-  <style type="text/css">
-  .distill-site-nav {
-    color: black;
-    background-color: #f9f6f7;
-    font-size: 15px;
-    font-weight: 300;
-  }
-
-  .distill-site-nav a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .distill-site-nav a:hover {
-    color: inherit;
-  }
-
-  .distill-site-header {
-  }
-
-  .distill-site-footer {
-  }
-
-  @media print {
-    .distill-site-nav {
-      display: none;
-    }
-  }
-  </style>
   <!--/radix_placeholder_site_in_header-->
 
-  <link rel="stylesheet" href="styles.css" type="text/css"/>
 
 </head>
 
-<body class="layout-listing">
+<body>
 
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"","authors":[]}
+{"title":"Bayesian AB Testing","description":"A short description of the post.","authors":[{"author":"Miha Gazvoda","authorURL":"https://mihagazvoda.com","affiliation":"&nbsp;","affiliationURL":"#","orcidID":""}],"publishedDate":"2021-04-17T00:00:00.000+00:00","citationText":"Gazvoda, 2021"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
 <!--radix_placeholder_navigation_before_body-->
-<header class="header header--fixed" role="banner">
-<nav class="distill-site-nav distill-site-header">
-<div class="nav-left">
-<span class="logo">
-<img src="images/miha-01.svg"/>
-</span>
-<a href="index.html" class="title">Miha Gazvoda</a>
-</div>
-<div class="nav-right">
-<a href="index.html">Blog</a>
-<a href="about.html">About</a>
-<a href="index.xml">
-<i class="fa fa-rss" aria-hidden="true"></i>
-</a>
-<a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
-</div>
-</nav>
-</header>
 <!--/radix_placeholder_navigation_before_body-->
 <!--radix_placeholder_site_before_body-->
 <!--/radix_placeholder_site_before_body-->
-<!--radix_placeholder_article_listing-->
-
-
-<script type="application/javascript">
-
-function init_posts_list() {
-
-  function load_image(img) {
-    var src = $(img).attr('data-src');
-    if (src) {
-      $(img).attr('src', src);
-      $(img).load(function() {
-        img.removeAttribute('data-src');
-      });
-    }
-  }
-
-  function set_posts_visible(posts, visible) {
-    if (visible) {
-
-      // show bottom border by default
-      $(posts).removeClass('post-preview-last');
-
-      // apply limits if need be
-      var max_posts = 25;
-      var apply_limits = $('.posts-container').hasClass('posts-apply-limit');
-      if (apply_limits && posts.length > max_posts) {
-        posts = $(posts).slice(0, max_posts);
-      } else {
-        $('.posts-more a').addClass('hidden');
-      }
-
-      // apply last style
-      $(posts.slice(-1)[0]).addClass('post-preview-last');
-
-      $(posts).removeClass('hidden');
-      $(posts).find('img[data-src]').each(function(i, img) {
-        load_image(img);
-      });
-    } else {
-      $(posts).addClass('hidden');
-    }
-  }
-
-  function apply_hash_filter() {
-
-    // clear active state
-    $('.categories .active').removeClass('active');
-
-    // mark all posts invisible to start
-    set_posts_visible($('.posts-list').children('a'), false);
-
-    // if we have a hash filter
-    if (window.location.hash && window.location.hash.startsWith("#category:")) {
-
-      // mark posts that match the category visible
-      var page_category = window.location.hash.replace(/^#category:/, "");
-      var posts = $('.post-metadata').map(function(idx, script) {
-        var metadata = $.parseJSON($(script).html());
-        var post = null;
-        $.each(metadata.categories, function(idx, category) {
-          category = category.replace(/ /g,"_");
-          if ((page_category || '').toLowerCase() === "articles" || category === page_category) {
-            post = $(script).parent().get();
-            return false;
-          }
-        });
-        return post;
-      });
-      set_posts_visible(posts, true);
-
-      // mark the hash active
-      $('.categories li>a[href="' + window.location.hash + '"]').addClass('active');
-
-      // update the list_caption
-      var list_caption = $('.posts-list-caption');
-      var caption = (page_category || '').toLowerCase() === "articles"
-        ? list_caption.attr('data-caption')
-        : ('Category: ' + page_category.replace(/_/g," "));
-      list_caption.text(caption);
-
-    } else {
-
-      // no hash filter, make all posts visible (subject to max display)
-      set_posts_visible($('.posts-list').children(), true);
-
-      // reset list caption
-      var list_caption = $('.posts-list-caption');
-      list_caption.text(list_caption.attr('data-caption'));
-
-
-    }
-  }
-
-  // more articles
-  function apply_post_limits(apply) {
-    if (apply) {
-      $('.posts-container').addClass('posts-apply-limit');
-      $('.posts-more a').removeClass('hidden');
-    } else {
-      $('.posts-container').removeClass('posts-apply-limit');
-      $('.posts-more a').addClass('hidden');
-    }
-  }
-
-  // click handling for tags
-  $('.dt-tag').click(function(ev) {
-    window.location.hash = '#category:' + $(this).text().replace(/ /g, "_");
-    return false;
-  })
-
-  // hash filter handling
-  apply_hash_filter();
-  $(window).on('hashchange',function() {
-    apply_post_limits(true);
-    apply_hash_filter();
-  });
-
-  // more articles link
-  $('.posts-more a').click(function(e) {
-    e.preventDefault();
-    apply_post_limits(false);
-    apply_hash_filter();
-    return false;
-  });
-
-}
-
-</script>
-
-
-
-<div class="posts-container posts-with-sidebar posts-apply-limit l-screen-inset">
-<div class="posts-list">
-<h1 class="posts-list-caption" data-caption=""></h1>
-<a href="posts/bayesian-ab-testing/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":["R","data science","Bayesian"]}</script>
-<div class="metadata">
-<div class="publishedDate">April 17, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Miha Gazvoda</div>
-</div>
-</div>
-<div class="thumbnail"></div>
-<div class="description">
-<h2>Bayesian AB Testing</h2>
-<div class="dt-tags">
-<div class="dt-tag">R</div>
-<div class="dt-tag">data science</div>
-<div class="dt-tag">Bayesian</div>
-</div>
-<p>A short description of the post.</p>
-</div>
-</a>
-<a href="posts/riddler-3-coins/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":["R","data science","The Riddler"]}</script>
-<div class="metadata">
-<div class="publishedDate">March 7, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Miha Gazvoda</div>
-</div>
-</div>
-<div class="thumbnail">
-<img src="posts/riddler-3-coins/../../images/coins/coin.png"/>
-</div>
-<div class="description">
-<h2>You have three coins in your pocket...</h2>
-<div class="dt-tags">
-<div class="dt-tag">R</div>
-<div class="dt-tag">data science</div>
-<div class="dt-tag">The Riddler</div>
-</div>
-<p>Solving a puzzle from 538's Riddler Express.</p>
-</div>
-</a>
-<a href="posts/riddler-jenga/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":["data science","R","The Riddler"]}</script>
-<div class="metadata">
-<div class="publishedDate">Feb. 22, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Miha Gazvoda</div>
-</div>
-</div>
-<div class="thumbnail">
-<img src="posts/riddler-jenga/../../images/jenga/jenga_preview.png"/>
-</div>
-<div class="description">
-<h2>Can You Win Riddler Jenga?</h2>
-<div class="dt-tags">
-<div class="dt-tag">data science</div>
-<div class="dt-tag">R</div>
-<div class="dt-tag">The Riddler</div>
-</div>
-<p>Can I?</p>
-</div>
-</a>
-<a href="posts/wall-riddle/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":["R","Bayesian","data science"]}</script>
-<div class="metadata">
-<div class="publishedDate">Feb. 7, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Miha Gazvoda</div>
-</div>
-</div>
-<div class="thumbnail">
-<img src="posts/wall-riddle/../../images/wall-puzzle/behind.png"/>
-</div>
-<div class="description">
-<h2>The wall riddle</h2>
-<div class="dt-tags">
-<div class="dt-tag">R</div>
-<div class="dt-tag">Bayesian</div>
-<div class="dt-tag">data science</div>
-</div>
-<p>Bayesian approach for dealing with biased data.</p>
-</div>
-</a>
-<a href="posts/2020-11-24-bayesian-updating/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":["data science","Bayesian","Shiny"]}</script>
-<div class="metadata">
-<div class="publishedDate">Jan. 2, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Miha Gazvoda</div>
-</div>
-</div>
-<div class="thumbnail">
-<img src="posts/2020-11-24-bayesian-updating/../../images/bayesian-updating/globe.png"/>
-</div>
-<div class="description">
-<h2>Intuitive Bayesian inference</h2>
-<div class="dt-tags">
-<div class="dt-tag">data science</div>
-<div class="dt-tag">Bayesian</div>
-<div class="dt-tag">Shiny</div>
-</div>
-<p>Binomial data example</p>
-</div>
-</a>
-<a href="posts/2020-04-21-drake-tutorial/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":["data science","R"]}</script>
-<div class="metadata">
-<div class="publishedDate">Oct. 30, 2020</div>
-<div class="dt-authors">
-<div class="dt-author">Miha Gazvoda</div>
-</div>
-</div>
-<div class="thumbnail">
-<img data-src="posts/2020-04-21-drake-tutorial/../../images/drake_preview.png"/>
-</div>
-<div class="description">
-<h2>Improve your data analysis workflow with the drake R package</h2>
-<div class="dt-tags">
-<div class="dt-tag">data science</div>
-<div class="dt-tag">R</div>
-</div>
-<p>A quick guide.</p>
-</div>
-</a>
-<a href="posts/2020-03-26-man-plans-god-laughs-the-planning-fallacy/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":["decision making under uncertainty"]}</script>
-<div class="metadata">
-<div class="publishedDate">Jan. 1, 2018</div>
-<div class="dt-authors">
-<div class="dt-author">Miha Gazvoda</div>
-</div>
-</div>
-<div class="thumbnail">
-<img data-src="posts/2020-03-26-man-plans-god-laughs-the-planning-fallacy/../../images/planning_fallacy_preview.png"/>
-</div>
-<div class="description">
-<h2>Man Plans, God Laughs: The Planning Fallacy</h2>
-<div class="dt-tags">
-<div class="dt-tag">decision making under uncertainty</div>
-</div>
-<p>So you’re planning to read the whole article? Let’s see…</p>
-</div>
-</a>
-<a href="posts/2020-03-26-the-714-words-the-picture-cant-tell/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":["this happened to me"]}</script>
-<div class="metadata">
-<div class="publishedDate">Dec. 12, 2017</div>
-<div class="dt-authors">
-<div class="dt-author">Miha Gazvoda</div>
-</div>
-</div>
-<div class="thumbnail">
-<img data-src="posts/2020-03-26-the-714-words-the-picture-cant-tell/../../images/words_714_preview.png"/>
-</div>
-<div class="description">
-<h2>The 714 words the picture can't tell</h2>
-<div class="dt-tags">
-<div class="dt-tag">this happened to me</div>
-</div>
-<p>I’m sorry, but the photo is private. Spoiler for friends: Instagram.</p>
-</div>
-</a>
-<a href="posts/2020-03-26-how-i-built-my-first-memory-palace-in-15-minutes/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":["this happened to me"]}</script>
-<div class="metadata">
-<div class="publishedDate">July 29, 2017</div>
-<div class="dt-authors">
-<div class="dt-author">Miha Gazvoda</div>
-</div>
-</div>
-<div class="thumbnail">
-<img data-src="posts/2020-03-26-how-i-built-my-first-memory-palace-in-15-minutes/../../images/memory_palace_preview.png"/>
-</div>
-<div class="description">
-<h2>How I built my first memory palace in 15 minutes</h2>
-<div class="dt-tags">
-<div class="dt-tag">this happened to me</div>
-</div>
-<p>And you can too.</p>
-</div>
-</a>
-<a href="posts/2020-03-26-my-phone-use-in-numbers-and-graphs/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":["data science"]}</script>
-<div class="metadata">
-<div class="publishedDate">May 13, 2017</div>
-<div class="dt-authors">
-<div class="dt-author">Miha Gazvoda</div>
-</div>
-</div>
-<div class="thumbnail">
-<img data-src="posts/2020-03-26-my-phone-use-in-numbers-and-graphs/../../images/phone_numbers_preview.png"/>
-</div>
-<div class="description">
-<h2>My phone use in numbers and graphs</h2>
-<div class="dt-tags">
-<div class="dt-tag">data science</div>
-</div>
-<p>Insights and visualizations from Moment app data</p>
-</div>
-</a>
-<a href="posts/2020-03-26-monument-to-erasmus/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":["this happened to me"]}</script>
-<div class="metadata">
-<div class="publishedDate">March 1, 2017</div>
-<div class="dt-authors">
-<div class="dt-author">Miha Gazvoda</div>
-</div>
-</div>
-<div class="thumbnail">
-<img data-src="posts/2020-03-26-monument-to-erasmus/../../images/erasmus_preview.png"/>
-</div>
-<div class="description">
-<h2>Monument to Erasmus</h2>
-<div class="dt-tags">
-<div class="dt-tag">this happened to me</div>
-</div>
-<p>No description needed.</p>
-</div>
-</a>
-<a href="posts/2020-03-28-the-role-of-luck-in-poker/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":["data science","decision making under uncertainty"]}</script>
-<div class="metadata">
-<div class="publishedDate">Sept. 14, 2015</div>
-<div class="dt-authors">
-<div class="dt-author">Miha Gazvoda</div>
-</div>
-</div>
-<div class="thumbnail">
-<img data-src="posts/2020-03-28-the-role-of-luck-in-poker/../../images/role_luck_in_poker_preview.png"/>
-</div>
-<div class="description">
-<h2>The role of luck in poker</h2>
-<div class="dt-tags">
-<div class="dt-tag">data science</div>
-<div class="dt-tag">decision making under uncertainty</div>
-</div>
-<p>How the number of hands played affects the variance?</p>
-</div>
-</a>
-</div>
-<div class="posts-sidebar">
-<div class="sidebar-section categories">
-<h3>Categories</h3>
-<ul>
-<li>
-<a href="#category:Articles">Articles</a>
-<span class="category-count">(12)</span>
-</li>
-<li>
-<a href="#category:Bayesian">Bayesian</a>
-<span class="category-count">(3)</span>
-</li>
-<li>
-<a href="#category:data_science">data science</a>
-<span class="category-count">(8)</span>
-</li>
-<li>
-<a href="#category:decision_making_under_uncertainty">decision making under uncertainty</a>
-<span class="category-count">(2)</span>
-</li>
-<li>
-<a href="#category:R">R</a>
-<span class="category-count">(5)</span>
-</li>
-<li>
-<a href="#category:Shiny">Shiny</a>
-<span class="category-count">(1)</span>
-</li>
-<li>
-<a href="#category:The_Riddler">The Riddler</a>
-<span class="category-count">(2)</span>
-</li>
-<li>
-<a href="#category:this_happened_to_me">this happened to me</a>
-<span class="category-count">(3)</span>
-</li>
-</ul>
-</div>
-</div>
-<div class="posts-more">
-<a href="#">More articles &raquo;</a>
-</div>
-</div>
-<!--/radix_placeholder_article_listing-->
 
 <div class="d-title">
-<h1>index.utf8</h1>
+<h1>Bayesian AB Testing</h1>
 <!--radix_placeholder_categories-->
+<div class="dt-tags">
+<div class="dt=tag">R</div>
+<div class="dt=tag">data science</div>
+<div class="dt=tag">Bayesian</div>
+</div>
 <!--/radix_placeholder_categories-->
-
+<p><p>A short description of the post.</p></p>
 </div>
 
+<div class="d-byline">
+  Miha Gazvoda <a href="https://mihagazvoda.com" class="uri">https://mihagazvoda.com</a> 
+  
+<br/>04-17-2021
+</div>
 
 <div class="d-article">
-<meta name="flattr:id" content="5qyrno">
+<p>The goal of this post introduce you t</p>
+<h1 id="plan">Plan:</h1>
+<ul>
+<li><p>how it relates to my previous post</p></li>
+<li><p>introduction to conjugate priors</p></li>
+<li><p>more about beta</p></li>
+<li><p>a simple example with beta</p></li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/source.html'>source</a></span><span class='op'>(</span><span class='st'>"functions.R"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<ul>
+<li>why would you prefer bayesian over standard testing</li>
+</ul>
+<blockquote>
+<p>First of all, interpretability is everything. Would you rather say “P(A &gt; B) is 10%”, or “Assuming the null hypothesis that A and B are equal is true, the probability that we would see a result this extreme in A vs B is equal to 3%”?`</p>
+</blockquote>
+<ul>
+<li><p>repeated testing?</p></li>
+<li><p>some tool to play around with betas</p></li>
+<li><p>play around with priors</p></li>
+</ul>
+<p>w</p>
+<h1 id="introduction">Introduction</h1>
+<h1 id="resources">Resources</h1>
+<p>Blogs:</p>
+<ul>
+<li><a href="https://www.countbayesie.com/blog/2015/4/25/bayesian-ab-testing" class="uri">https://www.countbayesie.com/blog/2015/4/25/bayesian-ab-testing</a></li>
+<li><a href="http://fportman.com/writing/bayesab-a-new-r-package-for-bayesian-ab-testing/" class="uri">http://fportman.com/writing/bayesab-a-new-r-package-for-bayesian-ab-testing/</a></li>
+<li><a href="http://varianceexplained.org/r/bayesian-ab-testing/" class="uri">http://varianceexplained.org/r/bayesian-ab-testing/</a></li>
+<li>beautiful viz: <a href="http://www.sumsar.net/blog/2018/12/visualizing-the-beta-binomial/" class="uri">http://www.sumsar.net/blog/2018/12/visualizing-the-beta-binomial/</a></li>
+</ul>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->

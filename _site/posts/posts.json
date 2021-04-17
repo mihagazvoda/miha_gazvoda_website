@@ -1,5 +1,26 @@
 [
   {
+    "path": "posts/bayesian-ab-testing/",
+    "title": "Bayesian AB Testing",
+    "description": "A short description of the post.",
+    "author": [
+      {
+        "name": "Miha Gazvoda",
+        "url": "https://mihagazvoda.com"
+      }
+    ],
+    "date": "2021-04-17",
+    "categories": [
+      "R",
+      "data science",
+      "Bayesian"
+    ],
+    "contents": "\nThe goal of this post introduce you t\nPlan:\nhow it relates to my previous post\nintroduction to conjugate priors\nmore about beta\na simple example with beta\n\n\nsource(\"functions.R\")\n\n\n\nwhy would you prefer bayesian over standard testing\n\nFirst of all, interpretability is everything. Would you rather say “P(A > B) is 10%”, or “Assuming the null hypothesis that A and B are equal is true, the probability that we would see a result this extreme in A vs B is equal to 3%”?`\n\nrepeated testing?\nsome tool to play around with betas\nplay around with priors\nw\nIntroduction\nResources\nBlogs:\nhttps://www.countbayesie.com/blog/2015/4/25/bayesian-ab-testing\nhttp://fportman.com/writing/bayesab-a-new-r-package-for-bayesian-ab-testing/\nhttp://varianceexplained.org/r/bayesian-ab-testing/\nbeautiful viz: http://www.sumsar.net/blog/2018/12/visualizing-the-beta-binomial/\n\n\n\n",
+    "preview": {},
+    "last_modified": "2021-04-17T11:51:52+02:00",
+    "input_file": "bayesian-ab-testing.utf8.md"
+  },
+  {
     "path": "posts/riddler-3-coins/",
     "title": "You have three coins in your pocket...",
     "description": "Solving a puzzle from 538's Riddler Express.",

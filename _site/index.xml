@@ -7,7 +7,18 @@
     <description>Miha Gazvoda's personal website
 </description>
     <generator>Distill</generator>
-    <lastBuildDate>Sun, 07 Mar 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 17 Apr 2021 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Bayesian AB Testing</title>
+      <dc:creator>Miha Gazvoda</dc:creator>
+      <link>https://mihagazvoda.com/posts/bayesian-ab-testing</link>
+      <description>A short description of the post.</description>
+      <category>R</category>
+      <category>data science</category>
+      <category>Bayesian</category>
+      <guid>https://mihagazvoda.com/posts/bayesian-ab-testing</guid>
+      <pubDate>Sat, 17 Apr 2021 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>You have three coins in your pocket...</title>
       <dc:creator>Miha Gazvoda</dc:creator>

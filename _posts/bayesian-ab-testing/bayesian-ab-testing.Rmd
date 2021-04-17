@@ -1,0 +1,63 @@
+---
+title: "Bayesian AB Testing"
+description: |
+  A short description of the post.
+author:
+  - name: Miha Gazvoda
+    url: https://mihagazvoda.com
+date: 04-17-2021
+categories: 
+  - R
+  - data science
+  - Bayesian
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+The goal of this post introduce you t
+
+# Plan: 
+
+* how it relates to my previous post
+* introduction to conjugate priors
+* more about beta
+
+* a simple example with beta
+
+```{r}
+source("functions.R")
+prop_model(c(TRUE, FALSE, TRUE))
+```
+
+
+* why would you prefer bayesian over standard testing
+
+
+
+> First of all, interpretability is everything. Would you rather say "P(A > B) is 10%", or "Assuming the null hypothesis that A and B are equal is true, the probability that we would see a result this extreme in A vs B is equal to 3%"?`
+
+* repeated testing?
+
+
+
+* some tool to play around with betas
+
+* play around with priors
+
+ w
+
+# Introduction
+
+
+# Resources
+Blogs: 
+
+* https://www.countbayesie.com/blog/2015/4/25/bayesian-ab-testing
+* http://fportman.com/writing/bayesab-a-new-r-package-for-bayesian-ab-testing/
+* http://varianceexplained.org/r/bayesian-ab-testing/
+* beautiful viz: http://www.sumsar.net/blog/2018/12/visualizing-the-beta-binomial/
+
+
+
+
