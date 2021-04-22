@@ -101,14 +101,20 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <meta property="og:type" content="article"/>
 <meta property="og:description" content="A short description of the post."/>
 <meta property="og:url" content="https://mihagazvoda.com/posts/bayesian-ab-testing/"/>
+<meta property="og:image" content="https://mihagazvoda.com/posts/bayesian-ab-testing/bayesian-ab-testing_files/figure-html5/unnamed-chunk-2-1.png"/>
+<meta property="og:image:width" content="1248"/>
+<meta property="og:image:height" content="768"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:site_name" content="Miha Gazvoda"/>
 
 <!--  https://dev.twitter.com/cards/types/summary -->
-<meta property="twitter:card" content="summary"/>
+<meta property="twitter:card" content="summary_large_image"/>
 <meta property="twitter:title" content="Miha Gazvoda: Bayesian AB Testing"/>
 <meta property="twitter:description" content="A short description of the post."/>
 <meta property="twitter:url" content="https://mihagazvoda.com/posts/bayesian-ab-testing/"/>
+<meta property="twitter:image" content="https://mihagazvoda.com/posts/bayesian-ab-testing/bayesian-ab-testing_files/figure-html5/unnamed-chunk-2-1.png"/>
+<meta property="twitter:image:width" content="1248"/>
+<meta property="twitter:image:height" content="768"/>
 
 <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
@@ -119,7 +125,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"NULL"}
+  {"type":"character","attributes":{},"value":["bayesian-ab-testing_files/anchor-4.2.2/anchor.min.js","bayesian-ab-testing_files/bowser-1.9.3/bowser.min.js","bayesian-ab-testing_files/distill-2.2.21/template.v2.js","bayesian-ab-testing_files/figure-html5/unnamed-chunk-2-1.png","bayesian-ab-testing_files/header-attrs-2.7/header-attrs.js","bayesian-ab-testing_files/jquery-1.11.3/jquery.min.js","bayesian-ab-testing_files/popper-2.6.0/popper.min.js","bayesian-ab-testing_files/tippy-6.2.7/tippy-bundle.umd.min.js","bayesian-ab-testing_files/tippy-6.2.7/tippy-light-border.css","bayesian-ab-testing_files/tippy-6.2.7/tippy.css","bayesian-ab-testing_files/tippy-6.2.7/tippy.umd.min.js","bayesian-ab-testing_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
 <meta name="distill:offset" content="../.."/>
@@ -1880,7 +1886,32 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <div class="d-article">
-<p>The goal of this post introduce you t</p>
+<p>In this post I will introduce you to Bayesian A/B testing for Binomial data (proportions of clicks on an ad or heads when throwing a coin). We will start with the</p>
+<h1 id="introduction">Introduction</h1>
+<p>In one of my previous posts I talked about <a href="https://mihagazvoda.com/posts/2020-11-24-bayesian-updating/">Intuitive Bayesian Inference</a> for Bernoulli trials. The focus was about building intuition on Bayesian inference. Here we will take a look on how to use Beta function to make the Bayesian inference for Binomial data smoother. In this example, let’s say we want to figure out who’s better basketball 3-point shooter. Again, we will have data that it will look like:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>made_3_point</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>FALSE</span>, <span class='cn'>FALSE</span>, <span class='cn'>FALSE</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>The skill is not changing over time. We want to figure out what is my true shot precision.</p>
+<p>We will use Bayesian rule to figure out this:</p>
+<p><span class="math display">\[ 
+P(p|data) = \frac{P(data|p)P(p)}{P(data)}
+\]</span> where <span class="math inline">\(P(p|data)\)</span> is the (updated) posterior distribution of my skill <span class="math inline">\(p\)</span> given likelihood <span class="math inline">\(P(data|p)\)</span> and prior assumptions <code>P(p)</code> and <code>P(data)</code> about my skill and data.</p>
+<p><span class="math display">\[
+posterior \propto likelihood \times prior
+\]</span></p>
+<h1 id="beta-function-the-alpha-woman-of-binomial-bayesian-model">Beta function, the alpha (wo)man of Binomial Bayesian model</h1>
+<blockquote>
+<p><a href="https://en.wikipedia.org/wiki/Beta_distribution">Wikipedia</a> says that the beta distribution is a family of continuous probability distributions defined on the interval [0, 1] parameterized by two positive shape parameters, denoted by <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>.</p>
+</blockquote>
+<p>That’s great since our <code>p</code> (probability of hitting a 3-pointer) is also on this range. It gets even better - beta is <a href="https://en.wikipedia.org/wiki/Conjugate_prior">conjugate</a> distribution for Binomial likelihood. This means that the posterior PDF is from the same probability distribution family as prior PDF. Both are beta functions! We need just update the parameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> based on observed data to come from prior to posterior. But how?</p>
+<p>Parameters present number of successes (<span class="math inline">\(\alpha\)</span>) and failures (<span class="math inline">\(\beta\)</span>).</p>
+<ul>
+<li>mogoce plotej razlicne bete</li>
+</ul>
 <h1 id="plan">Plan:</h1>
 <ul>
 <li><p>how it relates to my previous post</p></li>
@@ -1891,8 +1922,10 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/source.html'>source</a></span><span class='op'>(</span><span class='st'>"functions.R"</span><span class='op'>)</span>
+<span class='fu'>prop_model</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='cn'>FALSE</span>, <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>
 </code></pre>
 </div>
+<p><img src="bayesian-ab-testing_files/figure-html5/unnamed-chunk-2-1.png" width="624" /></p>
 </div>
 <ul>
 <li>why would you prefer bayesian over standard testing</li>
@@ -1902,11 +1935,12 @@ document.addEventListener('DOMContentLoaded', function() {
 </blockquote>
 <ul>
 <li><p>repeated testing?</p></li>
+<li><p>compare standard vs bayesian CI</p></li>
 <li><p>some tool to play around with betas</p></li>
 <li><p>play around with priors</p></li>
 </ul>
 <p>w</p>
-<h1 id="introduction">Introduction</h1>
+<h1 id="introduction-1">Introduction</h1>
 <h1 id="resources">Resources</h1>
 <p>Blogs:</p>
 <ul>
@@ -1939,6 +1973,15 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="d-appendix">
 </div>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 
 <!--radix_placeholder_site_after_body-->
 <!--/radix_placeholder_site_after_body-->

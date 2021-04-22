@@ -30,7 +30,7 @@ prop_model <- function(data = c(), prior_prop = c(1, 1), n_draws = 10000) {
                          prior_prop[1] + sum(data[seq_len(i)]),
                          prior_prop[2] + sum(!data[seq_len(i)]))
     probability <- probability / max(probability)
-    data_frame(value, label, proportion_success, probability)
+    tibble(value, label, proportion_success, probability)
   })
   # Turning label and value into factors with the right ordering for the plot
   dens_curves$label <- fct_rev(factor(dens_curves$label, levels =  paste0("n=", data_indices )))
