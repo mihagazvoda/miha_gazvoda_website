@@ -7,7 +7,15 @@
     <description>Miha Gazvoda's personal website
 </description>
     <generator>Distill</generator>
-    <lastBuildDate>Sun, 07 Mar 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 30 Apr 2021 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Campervan croatia</title>
+      <dc:creator>Miha Gazvoda</dc:creator>
+      <link>https://mihagazvoda.com/posts/campervan-croatia</link>
+      <description>A short description of the post.</description>
+      <guid>https://mihagazvoda.com/posts/campervan-croatia</guid>
+      <pubDate>Fri, 30 Apr 2021 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>You have three coins in your pocket...</title>
       <dc:creator>Miha Gazvoda</dc:creator>

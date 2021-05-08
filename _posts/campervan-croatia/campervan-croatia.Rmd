@@ -11,7 +11,18 @@ output:
     self_contained: false
 ---
 
-Every time I go on vacation, I came back more tired. So my advice (to me) is - keep it simple. First, remove the things that you don't like then add something you think you'll like. 
+I and my girlfriend Petra did a 5-day camper van trip in Croatia. It was more expensive and less comfortable than alternatives. But it was an adventure. We cried, we laughed, we lived. And drove, mostly drove. 
+
+We rented a *not-really-a-camper* van in Celje, Slovenia. It was a minimalistic version with shelves and bed only. There was also a camping gear but we used it only once. 
+
+# Day 1: Risnjak
+
+Destination for our first day was [Risnjak National Park](https://en.wikipedia.org/wiki/Risnjak_National_Park). Risnjak is situated in mountainous and heavily forested Gorski Kotar, 15 kilometers north-east from Rijeka. 
+
+We arrived at Risnjak entrance at 1pm. We wanted to hike to it's highest peak Veliki Risnjak with 1000 vertical meters of climbing and 18 km of hiking (both ways). Lady at the reception told us to forget about it: it's already too late and there's snow at the top so you need winter eqipment. Instead she proposed 4.5 km circular educational path nearby. 
+
+3 hours later we were on the top of Veliki Risnjak. The lady was right, there was snow at the top. The lady wasn't right, we were able to make it. 
+
 
 
 
