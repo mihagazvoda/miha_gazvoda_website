@@ -115,7 +115,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["bayesian-ab-testing_files/anchor-4.2.2/anchor.min.js","bayesian-ab-testing_files/bowser-1.9.3/bowser.min.js","bayesian-ab-testing_files/distill-2.2.21/template.v2.js","bayesian-ab-testing_files/figure-html5/unnamed-chunk-2-1.png","bayesian-ab-testing_files/header-attrs-2.7/header-attrs.js","bayesian-ab-testing_files/jquery-1.11.3/jquery.min.js","bayesian-ab-testing_files/popper-2.6.0/popper.min.js","bayesian-ab-testing_files/tippy-6.2.7/tippy-bundle.umd.min.js","bayesian-ab-testing_files/tippy-6.2.7/tippy-light-border.css","bayesian-ab-testing_files/tippy-6.2.7/tippy.css","bayesian-ab-testing_files/tippy-6.2.7/tippy.umd.min.js","bayesian-ab-testing_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["bayesian-ab-testing_files/anchor-4.2.2/anchor.min.js","bayesian-ab-testing_files/bowser-1.9.3/bowser.min.js","bayesian-ab-testing_files/distill-2.2.21/template.v2.js","bayesian-ab-testing_files/figure-html5/unnamed-chunk-2-1.png","bayesian-ab-testing_files/figure-html5/unnamed-chunk-3-1.png","bayesian-ab-testing_files/header-attrs-2.7/header-attrs.js","bayesian-ab-testing_files/jquery-1.11.3/jquery.min.js","bayesian-ab-testing_files/popper-2.6.0/popper.min.js","bayesian-ab-testing_files/tippy-6.2.7/tippy-bundle.umd.min.js","bayesian-ab-testing_files/tippy-6.2.7/tippy-light-border.css","bayesian-ab-testing_files/tippy-6.2.7/tippy.css","bayesian-ab-testing_files/tippy-6.2.7/tippy.umd.min.js","bayesian-ab-testing_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1492,19 +1492,40 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </div>
 </div>
 <p>The skill is not changing over time. We want to figure out what is my true shot precision.</p>
-<p>We will use Bayesian rule to figure out this:</p>
+<h1 id="conjugate">Conjugate</h1>
+<p>We could use Bayesian rule to figure out this:</p>
 <p><span class="math display">\[ 
 P(p|data) = \frac{P(data|p)P(p)}{P(data)}
 \]</span> where <span class="math inline">\(P(p|data)\)</span> is the (updated) posterior distribution of my skill <span class="math inline">\(p\)</span> given likelihood <span class="math inline">\(P(data|p)\)</span> and prior assumptions <code>P(p)</code> and <code>P(data)</code> about my skill and data.</p>
 <p><span class="math display">\[
 posterior \propto likelihood \times prior
-\]</span></p>
+\]</span> This is not to complicated but there exist conjugate priors that will make this even simpler.</p>
+<p>In Bayesian probability theory, if the posterior distributions p(θ | x) are in the same probability distribution family as the prior probability distribution p(θ), the prior and posterior are then called conjugate distributions, and the prior is called a conjugate prior for the likelihood function p(x | θ).</p>
+<p>For Bernoulli trials - this conjugate distribution is beta.</p>
 <h1 id="beta-function-the-alpha-woman-of-binomial-bayesian-model">Beta function, the alpha (wo)man of Binomial Bayesian model</h1>
-<blockquote>
 <p><a href="https://en.wikipedia.org/wiki/Beta_distribution">Wikipedia</a> says that the beta distribution is a family of continuous probability distributions defined on the interval [0, 1] parameterized by two positive shape parameters, denoted by <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>.</p>
-</blockquote>
-<p>That’s great since our <code>p</code> (probability of hitting a 3-pointer) is also on this range. It gets even better - beta is <a href="https://en.wikipedia.org/wiki/Conjugate_prior">conjugate</a> distribution for Binomial likelihood. This means that the posterior PDF is from the same probability distribution family as prior PDF. Both are beta functions! We need just update the parameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> based on observed data to come from prior to posterior. But how?</p>
-<p>Parameters present number of successes (<span class="math inline">\(\alpha\)</span>) and failures (<span class="math inline">\(\beta\)</span>).</p>
+<p>That’s great since our <code>p</code> (probability of hitting a 3-pointer) is also on this range. We need just update the parameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> based on observed data to come from prior to posterior. But how?</p>
+<p>Parameters present number of trial successes (<span class="math inline">\(\alpha\)</span>) and failures (<span class="math inline">\(\beta\)</span>). Mean of the distribution (expected <span class="math inline">\(p\)</span>) can be calculated as:<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> <span class="math display">\[E[X] = \frac{\alpha}{\alpha + \beta}\]</span></p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://ggplot2.tidyverse.org'>ggplot2</a></span><span class='op'>)</span>
+
+<span class='fu'>tidyr</span><span class='fu'>::</span><span class='fu'><a href='https://tidyr.tidyverse.org/reference/expand.html'>crossing</a></span><span class='op'>(</span>
+  alpha <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, 
+  beta <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, 
+  x <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>1</span>, length.out <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span>
+<span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>
+    y <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Beta.html'>dbeta</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>alpha</span>, <span class='va'>beta</span><span class='op'>)</span>,
+    parameter <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='va'>alpha</span>, <span class='va'>beta</span><span class='op'>)</span>
+  <span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span>, color <span class='op'>=</span> <span class='va'>parameter</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_path.html'>geom_line</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="bayesian-ab-testing_files/figure-html5/unnamed-chunk-2-1.png" width="624" /></p>
+</div>
 <ul>
 <li>mogoce plotej razlicne bete</li>
 </ul>
@@ -1521,7 +1542,7 @@ posterior \propto likelihood \times prior
 <span class='fu'>prop_model</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='cn'>FALSE</span>, <span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="bayesian-ab-testing_files/figure-html5/unnamed-chunk-2-1.png" width="624" /></p>
+<p><img src="bayesian-ab-testing_files/figure-html5/unnamed-chunk-3-1.png" width="624" /></p>
 </div>
 <ul>
 <li>why would you prefer bayesian over standard testing</li>
@@ -1546,6 +1567,12 @@ posterior \propto likelihood \times prior
 <li>beautiful viz: <a href="http://www.sumsar.net/blog/2018/12/visualizing-the-beta-binomial/" class="uri">http://www.sumsar.net/blog/2018/12/visualizing-the-beta-binomial/</a></li>
 </ul>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Variance: <span class="math inline">\(var[X] = \frac{\alpha \beta}{(\alpha + \beta)^2 (\alpha + \beta + 1)}\)</span><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

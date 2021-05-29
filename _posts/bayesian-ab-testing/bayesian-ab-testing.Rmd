@@ -29,7 +29,9 @@ made_3_point <- c(FALSE, FALSE, FALSE)
 
 The skill is not changing over time. We want to figure out what is my true shot precision.
 
-We will use Bayesian rule to figure out this: 
+# Conjugate
+
+We could use Bayesian rule to figure out this: 
 
 $$ 
 P(p|data) = \frac{P(data|p)P(p)}{P(data)}
@@ -39,19 +41,29 @@ where $P(p|data)$ is the (updated) posterior distribution of my skill $p$ given 
 $$
 posterior \propto likelihood \times prior
 $$
+This is not to complicated but there exist conjugate priors that will make this even simpler. 
+
+In Bayesian probability theory, if the posterior distributions p(θ | x) are in the same probability distribution family as the prior probability distribution p(θ), the prior and posterior are then called conjugate distributions, and the prior is called a conjugate prior for the likelihood function p(x | θ).
+
+For Bernoulli trials - this conjugate distribution is beta.
 
 # Beta function, the alpha (wo)man of Binomial Bayesian model
 
-> [Wikipedia](https://en.wikipedia.org/wiki/Beta_distribution) says that the beta distribution is a family of continuous probability distributions defined on the interval [0, 1] parameterized by two positive shape parameters, denoted by $\alpha$ and $\beta$. 
+[Wikipedia](https://en.wikipedia.org/wiki/Beta_distribution) says that the beta distribution is a family of continuous probability distributions defined on the interval [0, 1] parameterized by two positive shape parameters, denoted by $\alpha$ and $\beta$. 
 
-That's great since our `p` (probability of hitting a 3-pointer) is also on this range. It gets even better - beta is [conjugate](https://en.wikipedia.org/wiki/Conjugate_prior) distribution for Binomial likelihood. This means that the posterior PDF is from the same probability distribution family as prior PDF. Both are beta functions! We need just update the parameters $\alpha$ and $\beta$ based on observed data to come from prior to posterior. But how?
+That's great since our `p` (probability of hitting a 3-pointer) is also on this range. We need just update the parameters $\alpha$ and $\beta$ based on observed data to come from prior to posterior. But how?
 
-Parameters present number of successes ($\alpha$) and failures ($\beta$).
+Parameters present number of trial successes ($\alpha$) and failures ($\beta$). Mean of the distribution (expected $p$) can be calculated as:^[Variance: $var[X] = \frac{\alpha \beta}{(\alpha + \beta)^2 (\alpha + \beta + 1)}$] 
+$$E[X] = \frac{\alpha}{\alpha + \beta}$$
+So beta functions with different parameters look like this:
 
 ```{r}
+library(dplyr)
+library(ggplot2)
+
 tidyr::crossing(
-  alpha = 1:3, 
-  beta = 1:3, 
+  alpha = 1:2, 
+  beta = c(1, 5, 9), 
   x = seq(0, 1, length.out = 100)
 ) %>% 
   mutate(
@@ -59,11 +71,11 @@ tidyr::crossing(
     parameter = paste(alpha, beta)
   ) %>% 
   ggplot(aes(x, y, color = parameter)) + 
-  geom_line()
+  geom_line() +
+  viridis::scale_color_viridis(discrete = TRUE) + 
+  theme_classic()
 ```
 
-
-* mogoce plotej razlicne bete
 
 
 
