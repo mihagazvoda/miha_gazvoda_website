@@ -1,0 +1,31 @@
+---
+title: "Fooled by metrics"
+description: |
+  A short description of the post.
+author:
+  - name: Miha Gazvoda
+    url: https://mihagazvoda.com
+date: 05-29-2021
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+tidyr::crossing(
+  n = seq(5, 100, 5),
+  k = 1:1000
+) %>% 
+  rowwise() %>% 
+  mutate(r = cor(rnorm(n), rnorm(n))) %>% 
+  group_by(n) %>% 
+  summarise(sd_r = sd(r)) %>% 
+  ggplot(aes(n , sd_r)) +
+  geom_line()
+```
+
+
