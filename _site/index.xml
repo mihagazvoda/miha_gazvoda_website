@@ -7,7 +7,16 @@
     <description>Miha Gazvoda's personal website
 </description>
     <generator>Distill</generator>
-    <lastBuildDate>Sun, 07 Mar 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 29 May 2021 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Fooled by metrics</title>
+      <dc:creator>Miha Gazvoda</dc:creator>
+      <link>https://mihagazvoda.com/posts/fooled-by-metrics</link>
+      <description>A short description of the post.</description>
+      <guid>https://mihagazvoda.com/posts/fooled-by-metrics</guid>
+      <pubDate>Sat, 29 May 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://mihagazvoda.com/posts/fooled-by-metrics/fooled-by-metrics_files/figure-html5/unnamed-chunk-1-1.png" medium="image" type="image/png" width="1248" height="768"/>
+    </item>
     <item>
       <title>You have three coins in your pocket...</title>
       <dc:creator>Miha Gazvoda</dc:creator>

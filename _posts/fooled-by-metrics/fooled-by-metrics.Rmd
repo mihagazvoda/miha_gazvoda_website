@@ -11,6 +11,18 @@ output:
     self_contained: false
 ---
 
+Once upon a time I worked as a student data scientist for a start-up where we wanted to predict something about the person based on the measurement we did on them. In theory, these measurements (biomarkers) should correlate with the thing we wanted to predict but: 
+
+> In theory, theory and practice are the same. In practice, they are not.
+
+So we had more than 10 features per person and only about, let's say 50 persons. We often found correlations but then got dissapointed after additional measurements when it dissapeared. It was like a cat chasing its tail. I got to wonder, ok, strongly suspect, that we are getting correlations out of thin air. My plan was to do a simulation to check how probable is to get correlations as they were ours. I left the job before I got to do the simulation.
+
+Until, a few days ago I came across the video by Nassim Nicholas Taleb, doing and explain exactly the thing I planned to do. You can watch it on [Youtube](https://www.youtube.com/watch?v=fb921ZrM6h0). 
+<!-- <iframe width="560" height="315" src="https://www.youtube.com/watch?v=fb921ZrM6h0" frameborder="0" allowfullscreen> -->
+<!-- </iframe> -->
+
+
+* 10 plus features
 
 ```{r}
 library(dplyr)
