@@ -1,7 +1,7 @@
 [
   {
     "path": "posts/fooled-by-metrics/",
-    "title": "Fooled by metrics",
+    "title": "Fooled by correlation",
     "description": "A short description of the post.",
     "author": [
       {
@@ -11,9 +11,9 @@
     ],
     "date": "2021-05-29",
     "categories": [],
-    "contents": "\nOnce upon a time I worked as a student data scientist for a start-up where we wanted to predict something about the person based on the measurement we did on them. In theory, these measurements (biomarkers) should correlate with the thing we wanted to predict but:\n\nIn theory, theory and practice are the same. In practice, they are not.\n\nSo we had more than 10 features per person and only about, let’s say 50 persons. We often found correlations but then got dissapointed after additional measurements when it dissapeared. It was like a cat chasing its tail. I got to wonder, ok, strongly suspect, that we are getting correlations out of thin air. My plan was to do a simulation to check how probable is to get correlations as they were ours. I left the job before I got to do the simulation.\nUntil, a few days ago I came across the video by Nassim Nicholas Taleb, doing and explain exactly the thing I planned to do. You can watch it on Youtube.  \n10 plus features\n\n\nlibrary(dplyr)\nlibrary(ggplot2)\n\ntidyr::crossing(\n  n = seq(5, 100, 5),\n  k = 1:1000\n) %>% \n  rowwise() %>% \n  mutate(r = cor(rnorm(n), rnorm(n))) %>% \n  group_by(n) %>% \n  summarise(sd_r = sd(r)) %>% \n  ggplot(aes(n , sd_r)) +\n  geom_line()\n\n\n\n\n\n\n\n",
+    "contents": "\nOnce upon a time I worked as a student data scientist for a start-up where we wanted to predict something about the person based on the measurement we did on them. In theory, these measurements (biomarkers) should correlate with the thing we wanted to predict but:\n\nIn theory, theory and practice are the same. In practice, they are not.\n\nSo we had more than 10 features per person and only about, let’s say 50 persons. We often found correlations but then got dissapointed after additional measurements when it dissapeared. It was like a cat chasing its tail. I got to wonder, ok, strongly suspect, that we are getting correlations out of thin air. My plan was to do a simulation to check how probable is to get correlations as they were ours. I left the job before I got to do the simulation.\nUntil, a few days ago I came across the video by Nassim Nicholas Taleb, doing and explain exactly the thing I planned to do. You can watch it on Youtube.\n10 plus features\n\n\nlibrary(dplyr)\nlibrary(ggplot2)\n\ntidyr::crossing(\n  n = seq(5, 100, 5),\n  k = 1:1000\n) %>% \n  rowwise() %>% \n  mutate(r = cor(rnorm(n), rnorm(n))) %>% \n  group_by(n) %>% \n  summarise(sd_r = sd(r)) %>% \n  ggplot(aes(n , sd_r)) +\n  geom_line()\n\n\n\n\n\n\n\n",
     "preview": "posts/fooled-by-metrics/fooled-by-metrics_files/figure-html5/unnamed-chunk-1-1.png",
-    "last_modified": "2021-06-12T15:28:55+02:00",
+    "last_modified": "2021-06-21T08:20:01+02:00",
     "input_file": "fooled-by-metrics.utf8.md",
     "preview_width": 1248,
     "preview_height": 768
