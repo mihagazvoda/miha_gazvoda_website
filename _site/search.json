@@ -6,20 +6,20 @@
       "description": "<a href=\"https://twitter.com/mihagazvoda\"><img height=\"16\" width=\"16\" src=\"https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/twitter.svg\" /><\/a>\n&nbsp;\n<a href=\"https://www.linkedin.com/in/mihagazvoda/\"><img height=\"16\" width=\"16\" src=\"https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/linkedin.svg\" /><\/a>\n&nbsp;\n<a href=\"https://github.com/mihagazvoda/\"><img height=\"16\" width=\"16\" src=\"https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/github.svg\" /><\/a>\n&nbsp;\n<a href=\"https://medium.com/@mihagazvoda\"><img height=\"16\" width=\"16\" src=\"https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/medium.svg\" /><\/a>\n&nbsp;\n<a href=\"https://www.goodreads.com/user/show/31076100-miha-gazvoda\"><img height=\"16\" width=\"16\" src=\"https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/goodreads.svg\" /><\/a>",
       "author": [],
       "contents": "\nMy name is Miha Gazvoda and I work as a data scientist at Outfit7 (Ekipa2 d.o.o. subsidiary) in Ljubljana, Slovenia. I love outdoor sports - cycling is my favorite. During my early student years, I was a semi-professional poker player and won a Slovenian poker championship (team event) in 2014. I can’t say no to a non-fiction book that arouses my curiosity. And I can’t say no to an excuse not to write. I’m trying to fix that - right here, right now.\n\n\\(\\bullet\\bullet\\bullet\\)\n\nThis blog is a collection of my data science side projects, topics that interest me, and personal stories I want to share. It’s built with Distill and deployed using Netlify. My logo (on upper-left corner) was created by Jovana Đukić.\n\n\n\n",
-      "last_modified": "2021-03-09T21:58:24+01:00"
+      "last_modified": "2021-06-22T12:11:20+02:00"
     },
     {
       "path": "index.html",
       "title": "",
       "author": [],
       "contents": "\n\n\n\n",
-      "last_modified": "2021-03-09T21:58:24+01:00"
+      "last_modified": "2021-06-22T12:11:23+02:00"
     },
     {
       "path": "README.html",
       "author": [],
       "contents": "\nmiha_gazvoda_website\nUse rmarkdown::render_site() to build the whole site. It’s also possible to knit the separate articles that are in _posts folder.\n\n\n",
-      "last_modified": "2021-03-09T21:58:24+01:00"
+      "last_modified": "2021-06-22T12:11:23+02:00"
     }
   ],
   "collections": ["posts/posts.json"]

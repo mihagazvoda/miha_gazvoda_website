@@ -115,7 +115,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["fooled-by-metrics_files/anchor-4.2.2/anchor.min.js","fooled-by-metrics_files/bowser-1.9.3/bowser.min.js","fooled-by-metrics_files/distill-2.2.21/template.v2.js","fooled-by-metrics_files/figure-html5/unnamed-chunk-1-1.png","fooled-by-metrics_files/header-attrs-2.7/header-attrs.js","fooled-by-metrics_files/jquery-1.11.3/jquery.min.js","fooled-by-metrics_files/popper-2.6.0/popper.min.js","fooled-by-metrics_files/tippy-6.2.7/tippy-bundle.umd.min.js","fooled-by-metrics_files/tippy-6.2.7/tippy-light-border.css","fooled-by-metrics_files/tippy-6.2.7/tippy.css","fooled-by-metrics_files/tippy-6.2.7/tippy.umd.min.js","fooled-by-metrics_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["fooled-by-metrics_files/anchor-4.2.2/anchor.min.js","fooled-by-metrics_files/bowser-1.9.3/bowser.min.js","fooled-by-metrics_files/distill-2.2.21/template.v2.js","fooled-by-metrics_files/figure-html5/unnamed-chunk-1-1.png","fooled-by-metrics_files/figure-html5/unnamed-chunk-2-1.png","fooled-by-metrics_files/figure-html5/unnamed-chunk-3-1.png","fooled-by-metrics_files/figure-html5/unnamed-chunk-5-1.png","fooled-by-metrics_files/figure-html5/unnamed-chunk-6-1.png","fooled-by-metrics_files/figure-html5/unnamed-chunk-8-1.png","fooled-by-metrics_files/header-attrs-2.7/header-attrs.js","fooled-by-metrics_files/jquery-1.11.3/jquery.min.js","fooled-by-metrics_files/popper-2.6.0/popper.min.js","fooled-by-metrics_files/tippy-6.2.7/tippy-bundle.umd.min.js","fooled-by-metrics_files/tippy-6.2.7/tippy-light-border.css","fooled-by-metrics_files/tippy-6.2.7/tippy.css","fooled-by-metrics_files/tippy-6.2.7/tippy.umd.min.js","fooled-by-metrics_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1479,10 +1479,77 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <div class="d-article">
 <p>Once upon a time I worked as a student data scientist for a start-up where we wanted to predict something about the person based on the measurement we did on them. In theory, these measurements (biomarkers) should correlate with the thing we wanted to predict but:</p>
 <blockquote>
-<p>In theory, theory and practice are the same. In practice, they are not.</p>
+<p>In theory, theory and practice are the same. In practice, they are not. - Unknown</p>
 </blockquote>
-<p>So we had more than 10 features per person and only about, let’s say 50 persons. We often found correlations but then got dissapointed after additional measurements when it dissapeared. It was like a cat chasing its tail. I got to wonder, ok, strongly suspect, that we are getting correlations out of thin air. My plan was to do a simulation to check how probable is to get correlations as they were ours. I left the job before I got to do the simulation.</p>
+<p>So we had more than 10 features per person and only about, let’s say 30 persons. We often found correlations but then got dissapointed after additional measurements when it dissapeared. It was like a cat chasing its tail. I got to wonder, ok, strongly suspect, that we are getting correlations out of thin air. My plan was to do a simulation to check how probable is to get correlations as they were ours. I left the job before I got to do the simulation.</p>
 <p>Until, a few days ago I came across the video by Nassim Nicholas Taleb, doing and explain exactly the thing I planned to do. You can watch it on <a href="https://www.youtube.com/watch?v=fb921ZrM6h0">Youtube</a>.</p>
+<h2 id="how-to-fool-yourself-with-correlation-101">How to fool yourself with correlation 101</h2>
+<p>Let’s simulate the situation we were probably in. Let’s say we measured 30 subjects and then calculated 15 features for each one. Each one of the features (including the outcome) is random<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://tidyr.tidyverse.org'>tidyr</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://ggplot2.tidyverse.org'>ggplot2</a></span><span class='op'>)</span>
+
+<span class='va'>n_features</span> <span class='op'>&lt;-</span> <span class='fl'>15</span>
+<span class='va'>n_subjects</span> <span class='op'>&lt;-</span> <span class='fl'>30</span>
+
+<span class='va'>subject_data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>replicate</a></span><span class='op'>(</span><span class='va'>n_features</span> <span class='op'>+</span> <span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>n_subjects</span><span class='op'>)</span><span class='op'>)</span>, 
+  .name_repair <span class='op'>=</span> <span class='op'>~</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='st'>"x"</span>, <span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='va'>n_features</span><span class='op'>)</span><span class='op'>)</span>, <span class='st'>"y"</span><span class='op'>)</span>
+<span class='op'>)</span>
+
+<span class='va'>corrs_with_y</span> <span class='op'>&lt;-</span> <span class='va'>subject_data</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'>corrr</span><span class='fu'>::</span><span class='fu'><a href='https://corrr.tidymodels.org/reference/correlate.html'>correlate</a></span><span class='op'>(</span>method <span class='op'>=</span> <span class='st'>"pearson"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>corrr</span><span class='fu'>::</span><span class='fu'><a href='https://corrr.tidymodels.org/reference/focus.html'>focus</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/rename.html'>rename</a></span><span class='op'>(</span>feature <span class='op'>=</span> <span class='st'>"term"</span>, r <span class='op'>=</span> <span class='st'>"y"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/arrange.html'>arrange</a></span><span class='op'>(</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/desc.html'>desc</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+
+<span class='fu'>corrr</span><span class='fu'>::</span><span class='fu'><a href='https://corrr.tidymodels.org/reference/fashion.html'>fashion</a></span><span class='op'>(</span><span class='va'>corrs_with_y</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>   feature    r
+1      x12 -.32
+2       x5 -.31
+3       x7 -.28
+4      x14 -.24
+5       x2  .23
+6       x3 -.17
+7       x1 -.13
+8      x13  .07
+9       x9 -.05
+10      x8 -.05
+11      x6  .04
+12     x15 -.02
+13     x10 -.01
+14     x11 -.01
+15      x4 -.00</code></pre>
+</div>
+<p>We are getting quite decent correlations (at least that’s what I thought) out of the thin air! Look at the plots below, displaying 3 best (spurrious) correlations. We often see something like this in the news, even scientific publications! As Taleb said:</p>
+<blockquote>
+<p>The point is not that the correlation is not causation, is that very often correlation is not correlation. - Nassim Nicholas Taleb</p>
+</blockquote>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>specify_decimal</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>k</span><span class='op'>)</span> <span class='fu'><a href='https://rdrr.io/r/base/trimws.html'>trimws</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>k</span><span class='op'>)</span>, nsmall<span class='op'>=</span><span class='va'>k</span><span class='op'>)</span><span class='op'>)</span>
+
+<span class='va'>features_with_highest_corrs</span> <span class='op'>&lt;-</span> <span class='va'>corrs_with_y</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fl'>3</span><span class='op'>)</span>
+
+<span class='va'>subject_data</span> <span class='op'>%&gt;%</span>
+  <span class='fu'><a href='https://tidyr.tidyverse.org/reference/pivot_longer.html'>pivot_longer</a></span><span class='op'>(</span>cols <span class='op'>=</span> <span class='fu'><a href='https://tidyselect.r-lib.org/reference/starts_with.html'>starts_with</a></span><span class='op'>(</span><span class='st'>"x"</span><span class='op'>)</span>, names_to <span class='op'>=</span> <span class='st'>"feature"</span>, values_to <span class='op'>=</span> <span class='st'>"x"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>right_join</a></span><span class='op'>(</span><span class='va'>features_with_highest_corrs</span>, by <span class='op'>=</span> <span class='st'>"feature"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>label <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='va'>feature</span>, <span class='st'>": "</span>, <span class='fu'>specify_decimal</span><span class='op'>(</span><span class='va'>r</span>, <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_smooth.html'>geom_smooth</a></span><span class='op'>(</span>method <span class='op'>=</span> <span class='st'>"lm"</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/facet_grid.html'>facet_grid</a></span><span class='op'>(</span><span class='op'>~</span><span class='fu'>forcats</span><span class='fu'>::</span><span class='fu'><a href='https://forcats.tidyverse.org/reference/fct_reorder.html'>fct_reorder</a></span><span class='op'>(</span><span class='va'>label</span>, <span class='fu'><a href='https://dplyr.tidyverse.org/reference/desc.html'>desc</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggtheme.html'>theme_classic</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="fooled-by-metrics_files/figure-html5/unnamed-chunk-2-1.png" width="624" /></p>
+</div>
+<p>Taleb mentions that</p>
 <ul>
 <li>10 plus features</li>
 </ul>
@@ -1497,15 +1564,81 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <span class='op'>)</span> <span class='op'>%&gt;%</span> 
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/rowwise.html'>rowwise</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>r <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>sd_r <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/sd.html'>sd</a></span><span class='op'>(</span><span class='va'>r</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
-  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span><span class='va'>n</span> , <span class='va'>sd_r</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='co'># group_by(n) %&gt;% </span>
+  <span class='co'># summarise(sd_r = sd(r)) %&gt;% </span>
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span><span class='va'>n</span> , <span class='va'>r</span>, group <span class='op'>=</span> <span class='va'>n</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_violin.html'>geom_violin</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="fooled-by-metrics_files/figure-html5/unnamed-chunk-3-1.png" width="624" /></p>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>df</span> <span class='op'>&lt;-</span> <span class='fu'>tidyr</span><span class='fu'>::</span><span class='fu'><a href='https://tidyr.tidyverse.org/reference/expand.html'>crossing</a></span><span class='op'>(</span>
+  n <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>5</span>, <span class='fl'>10</span>, <span class='fl'>20</span>, <span class='fl'>30</span>, <span class='fl'>50</span>, <span class='fl'>100</span>, <span class='fl'>1000</span><span class='op'>)</span>,
+  r_actual <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>0.95</span>, by <span class='op'>=</span> <span class='fl'>0.05</span><span class='op'>)</span>,
+  k <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span> <span class='co'># TODO should be 1000</span>
+<span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/rowwise.html'>rowwise</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>
+    x <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span><span class='op'>)</span>,
+    y <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'>faux</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/faux/man/rnorm_pre.html'>rnorm_pre</a></span><span class='op'>(</span><span class='va'>x</span>, r <span class='op'>=</span> <span class='va'>r_actual</span><span class='op'>)</span><span class='op'>)</span>,
+    r_calc <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span><span class='op'>)</span>
+  <span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>df</span> <span class='op'>%&gt;%</span> 
+    <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>r_actual</span> <span class='op'>==</span> <span class='fl'>0.9</span>, <span class='va'>n</span> <span class='op'>==</span> <span class='fl'>5</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+    <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span><span class='va'>r_calc</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span> 
+    <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_histogram.html'>geom_histogram</a></span><span class='op'>(</span>binwidth <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="fooled-by-metrics_files/figure-html5/unnamed-chunk-5-1.png" width="624" /></p>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>tmp</span> <span class='op'>&lt;-</span> <span class='va'>df</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>n</span>, <span class='va'>r_actual</span>, r_calc_rounded <span class='op'>=</span> <span class='fu'>plyr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/plyr/man/round_any.html'>round_any</a></span><span class='op'>(</span><span class='va'>r_calc</span>, <span class='fl'>0.1</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>count <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/context.html'>n</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>p <span class='op'>=</span> <span class='va'>count</span> <span class='op'>/</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>count</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>ungroup</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind_rows</a></span><span class='op'>(</span>
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>.</span>, <span class='va'>r_actual</span> <span class='op'>!=</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+      <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/across.html'>across</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>r_actual</span>, <span class='va'>r_calc_rounded</span><span class='op'>)</span>, <span class='va'>`-`</span><span class='op'>)</span><span class='op'>)</span>
+  <span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>tmp2</span> <span class='op'>&lt;-</span> <span class='va'>tmp</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>n</span>, <span class='va'>r_calc_rounded</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>p_posterior <span class='op'>=</span> <span class='va'>p</span> <span class='op'>/</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>p</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>tmp2</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>r_calc_rounded</span> <span class='op'>==</span> <span class='fl'>0.2</span>, <span class='va'>n</span> <span class='op'>==</span> <span class='fl'>20</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span><span class='va'>r_actual</span>, <span class='va'>p_posterior</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span> 
   <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_path.html'>geom_line</a></span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="fooled-by-metrics_files/figure-html5/unnamed-chunk-1-1.png" width="624" /></p>
+<p><img src="fooled-by-metrics_files/figure-html5/unnamed-chunk-8-1.png" width="624" /></p>
 </div>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<p>TODO exaplin gaming metrics: for example choosing best 3 correlations out of 20</p>
+<p>mention that this also holds for other metrics, not only correlation</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Normally distributed with the mean 0 and standard deviation 1.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
