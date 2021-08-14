@@ -5,23 +5,36 @@ description: |
 author:
   - name: Miha Gazvoda
     url: https://mihagazvoda.com
-date: 05-29-2021
+date: 08-15-2021
 output:
   distill::distill_article:
     self_contained: false
 ---
 
-Once upon a time I worked as a student data scientist for a start-up where we wanted to predict something about the person based on the measurement we did on them. In theory, these measurements (biomarkers) should correlate with the thing we wanted to predict but: 
+```{r}
+library(lemon)
+knit_print.data.frame <- lemon_print
+knit_print.table <- lemon_print
+knit_print.grouped_df <- lemon_print 
+knit_print.tibble <- lemon_print
+knit_print.tbl <- lemon_print
+options(digits=2)
+
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+
+Once upon a time I worked as a student data scientist for a start-up where we wanted to predict a person's bio-marker based on the measurement we did on them. In theory, these measurements (biomarkers) should correlate with the thing we wanted to predict but: 
 
 > In theory, theory and practice are the same. In practice, they are not. - Unknown
 
-So we had more than 10 features per person and only about, let's say 30 persons. We often found correlations but then got dissapointed after additional measurements when it dissapeared. It was like a cat chasing its tail. I got to wonder, ok, strongly suspect, that we are getting correlations out of thin air. My plan was to do a simulation to check how probable is to get correlations as they were ours. I left the job before I got to do the simulation.
+So we had more than 10 features per person and only about, let's say 30 persons. We often found correlations but then got disappointed after additional measurements when the correlation dissapeared. It was like a cat chasing its tail. I got to suspect, that we were getting correlations out of a thin air. My plan was to do a simulation to check how probable is to get correlations as they were ours by chance. I left the job before I got to do the simulation.
 
 Until, a few days ago I came across the video by Nassim Nicholas Taleb, doing and explain exactly the thing I planned to do. You can watch it on [Youtube](https://www.youtube.com/watch?v=fb921ZrM6h0). 
 
 ## How to fool yourself with correlation 101
 
-Let's simulate the situation we were probably in. Let's say we measured 25 subjects and then calculated 15 features for each one. Each one of the features (including the outcome) is random^[Normally distributed with the mean 0 and standard deviation 1.].
+Let's simulate the situation we were probably in. Let's say we measured 25 subjects and then calculated 15 features for each one. Each one of the features, including the outcome, is random^[Normally distributed with the mean 0 and standard deviation 1.] and independent from others.
 
 ```{r}
 library(dplyr)
@@ -36,6 +49,14 @@ subject_data <- as_tibble(
   .name_repair = ~c(paste0("x", as.character(1:n_features)), "y")
 )
 
+subject_data %>% 
+  select(x1, x2, x3, x4, x5, y) %>% 
+  head()
+```
+
+As you can see above, each row presents one subject. Columns `x1` to `x15` (only the first 5 is displayed) present features and `y` a value we want to predict. Let's calculate correlation correlation of each future in respect to `y`. In reality, they should be zero, but are they? 
+
+```{r}
 corrs_with_y <- subject_data %>% 
   corrr::correlate(method = "pearson") %>%
   corrr::focus(y) %>% 
@@ -45,19 +66,19 @@ corrs_with_y <- subject_data %>%
 corrr::fashion(corrs_with_y)
 ```
 
-We are getting quite decent correlations (at least that's what I thought) out of the thin air! Look at the plots below, displaying 3 best (spurrious) correlations. We often see something like this in the news, even scientific publications! As Taleb said: 
+We are getting quite decent (at least that's what I thought) correlations out of the thin air! Look at the plots below, displaying 3 best spurious correlations. We often see something like this in the news, even scientific publications! As Taleb says: 
 
 > The point is not that the correlation is not causation, is that very often correlation is not correlation.
 
 
-```{r}
+```{r, echo=FALSE}
 specify_decimal <- function(x, k) trimws(format(round(x, k), nsmall=k))
 
 features_with_highest_corrs <- corrs_with_y %>% 
   head(3)
 
 subject_data %>%
-  pivot_longer(cols = starts_with("x"), names_to = "feature", values_to = "x") %>% 
+  pivot_longer(cols = starts_with("x"), names_to = "feature", values_to = "x") %>%
   right_join(features_with_highest_corrs, by = "feature") %>% 
   mutate(label = paste0(feature, ": ", specify_decimal(r, 2))) %>% 
   ggplot(aes(x, y)) + 
@@ -67,19 +88,35 @@ subject_data %>%
   theme_classic()
 ```
 
-How often can totally random data produce "high" correlations, let's say 0.3 or higher (in absolute terms)? It depends on a sample size. Let's simulate!
+## Simulation: Getting spurious correlations
+
+How often can totally random data produce "high" correlations. Let's look at the distribution of correlations of two independent datasets with `n_subjects` data points.
 
 ```{r}
-simulated_r <- replicate(10000, cor(rnorm(n_subjects), rnorm(n_subjects)))
+simulated_correlations <- replicate(10000, cor(rnorm(n_subjects), rnorm(n_subjects)))
 
-tibble(r = simulated_r) %>% 
+tibble(r = simulated_correlations) %>% 
   ggplot(aes(r)) +
   geom_histogram(aes(y = ..density..)) +
-  stat_function(fun = dnorm, args = list(mean = mean(simulated_r), sd = sd(simulated_r)))
+  stat_function(
+    fun = dnorm, 
+    args = list(mean = mean(simulated_correlations), sd = sd(simulated_correlations))
+  )
 ```
 
-This looks like the most normal function I've seen. Let's check how tweaking/gaming the metrics can be seen. 
+This looks like the most normal function I've seen. See the table below what's the probability to get higher than something correlation.
 
+```{r}
+tibble(
+  simulated_correlations = list(simulated_correlations), 
+  r_threshold = seq(0.1, 0.5, by = 0.1)
+) %>%
+  rowwise() %>% 
+  mutate(p_above_threshold = mean(abs(simulated_correlations) > r_threshold)) %>% 
+  ungroup() %>% 
+  select(r_threshold, p_above_threshold)
+```
+That's not little! Remember the time when you were all enthusiastic about 0.3 correlation in your data. Below let's see how standard deviation and 95th percentile change with sample size.
 
 ```{r}
 df <- crossing(
@@ -89,33 +126,27 @@ df <- crossing(
   rowwise() %>% 
   mutate(r = cor(rnorm(n), rnorm(n))) 
 
-# %>% 
-#   # group_by(n) %>% 
-#   # summarise(sd_r = sd(r)) %>% 
-#   ggplot(aes(n , r, group = n)) +
-#   geom_violin()
-```
-
-```{r}
-df %>% 
-  filter(n == n_subjects) %>% 
-  ggplot(aes(r)) +
-  geom_histogram()
-```
-
-
-```{r}
 df %>% 
   group_by(n) %>% 
   summarise(
     sd = sd(r), 
-    p90 = quantile(abs(r), 0.9)
+    p90 = quantile(abs(r), 0.95)
   ) %>% 
   ggplot(aes(x = n)) + 
   geom_line(aes(y = sd)) + 
-  geom_line(aes(y = p90), linetype = "dashed")
+  geom_line(aes(y = p90), linetype = "dashed") + 
+  expand_limits(y = 0)
 ```
 
+The values are dropping as $sqrt(n)$. 
+
+The funny thing is, since now you know mean and standard deviation describing distribution of pearson correlation coefficients you can actually hypotesize test it. You can calculate `p` value, telling you probability that such `r` could be generated if there's no correlation and then reject the null hypothesis that it comes from distribution where actual r = 0 if p < 0.05. 
+
+But this might not be the answer we are looking for. What if we are looking for `P(r > some value|observed r)`? Then, my friend, we have to turn to our friend Bayes.
+
+## Bayesian party
+
+Right now, we were calculating posterior parameter distribution of `P( r |  independent data)`. 
 
 ```{r}
 df <- tidyr::crossing(
