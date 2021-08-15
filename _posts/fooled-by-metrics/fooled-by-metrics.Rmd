@@ -1,7 +1,7 @@
 ---
 title: "Fooled by correlation"
 description: |
-  A short description of the post.
+  How to not get fooled by correlation using Bayesian stats
 author:
   - name: Miha Gazvoda
     url: https://mihagazvoda.com
@@ -19,6 +19,7 @@ knit_print.grouped_df <- lemon_print
 knit_print.tibble <- lemon_print
 knit_print.tbl <- lemon_print
 options(digits=2)
+ggplot2::theme_set(ggplot2::theme_classic())
 
 knitr::opts_chunk$set(cache = TRUE)
 ```
@@ -30,7 +31,7 @@ Once upon a time I worked as a student data scientist for a start-up where we wa
 
 So we had more than 10 features per person and only about, let's say 30 persons. We often found correlations but then got disappointed after additional measurements when the correlation dissapeared. It was like a cat chasing its tail. I got to suspect, that we were getting correlations out of a thin air. My plan was to do a simulation to check how probable is to get correlations as they were ours by chance. I left the job before I got to do the simulation.
 
-Until, a few days ago I came across the video by Nassim Nicholas Taleb, doing and explain exactly the thing I planned to do. You can watch it on [Youtube](https://www.youtube.com/watch?v=fb921ZrM6h0). 
+Until, a few days ago I came across the video by Nassim Nicholas Taleb, doing and explain exactly the thing I planned to do. You can watch it on [Youtube](https://wwwyoutube.com/watch?v=fb921ZrM6h0). 
 
 ## How to fool yourself with correlation 101
 
@@ -84,9 +85,10 @@ subject_data %>%
   ggplot(aes(x, y)) + 
   geom_point() + 
   geom_smooth(method = "lm") + 
-  facet_grid(~forcats::fct_reorder(label, desc(abs(r)))) + 
-  theme_classic()
+  facet_grid(~forcats::fct_reorder(label, desc(abs(r))))
 ```
+
+TODO exaplin gaming metrics: for example choosing best 3 correlations out of 20
 
 ## Simulation: Getting spurious correlations
 
@@ -116,6 +118,7 @@ tibble(
   ungroup() %>% 
   select(r_threshold, p_above_threshold)
 ```
+
 That's not little! Remember the time when you were all enthusiastic about 0.3 correlation in your data. Below let's see how standard deviation and 95th percentile change with sample size.
 
 ```{r}
@@ -146,57 +149,72 @@ But this might not be the answer we are looking for. What if we are looking for 
 
 ## Bayesian party
 
-Right now, we were calculating posterior parameter distribution of `P( r |  independent data)`. 
+Right now, we were calculating likelihood distribution of $P( r_{obs} | r_{true})$. But we interested in posterior $P( r_{true} | r_{obs})$ - what's the distribution of actual $r$ given you observed `r=0.5`, for example?
 
 ```{r}
-df <- tidyr::crossing(
-  n = c(5, 10, 20, 30, 50, 100, 1000),
-  r_actual = seq(0, 0.95, by = 0.05),
-  k = 1:10 # TODO should be 1000
+correlations_positive_only <- tidyr::crossing(
+  n = as.integer(c(10, 50, 100, 1000)),
+  r_true = seq(0, 0.95, by = 0.05),
+  k = 1:1000 # TODO should be 1000
 ) %>% 
   rowwise() %>% 
   mutate(
     x = list(rnorm(n)),
-    y = list(faux::rnorm_pre(x, r = r_actual)),
-    r_calc = cor(x, y)
+    y = list(faux::rnorm_pre(x, r = r_true)),
+    r_obs = cor(x, y)
+  ) %>% 
+  select(-x, -y)
+
+df <- bind_rows(
+    correlations_positive_only,
+    correlations_positive_only %>% 
+      filter(r_true > 0) %>%
+      mutate(across(c(r_true, r_obs), `-`))
   )
+
+df
 ```
+
+This is how we can get likelihood distribution, the same as we had above for $r_{true}=0$. Now let's do it for different parameters. 
 
 ```{r}
 df %>% 
-    filter(r_actual == 0.9, n == 5) %>% 
-    ggplot(aes(r_calc)) + 
-    geom_histogram(binwidth = 0.1)
+    filter(r_true == 0.5, n == 100) %>% 
+    ggplot(aes(r_obs)) + 
+    geom_density()
 ```
+
+Let's go to Bayesian formula again. $$P(r_{true} | r_{obs}) = P(r_{true}) P( r_{obs} | r_{true})$$. As usual, we will drop the bottom part. First for each $n$ and $r_{true}$ what's the probability it will generate $r_{obs}$. We bin $r_{obs}$ so we can actually calculate probabilities for it. This technique is called grid approximation - you can read more about it on my [Intuitive Bayesian Inference](https://mihagazvoda.com/posts/2020-11-24-bayesian-updating/) blog post. 
 
 ```{r}
 tmp <- df %>% 
-  group_by(n, r_actual, r_calc_rounded = plyr::round_any(r_calc, 0.1)) %>% 
+  group_by(n, r_true, r_obs_rounded = plyr::round_any(r_obs, 0.1)) %>% 
   summarise(count = n()) %>% 
-  mutate(p = count / sum(count)) %>% 
+  mutate(likelihood = count / sum(count)) %>% 
   ungroup() %>% 
-  bind_rows(
-      filter(., r_actual != 0) %>% 
-      mutate(across(c(r_actual, r_calc_rounded), `-`))
-  )
+  mutate(
+    prior = dnorm(r_true, x = 0, sd = 0.5),
+    posterior_unstd = likelihood * prior
+  ) %>% 
+  group_by(n, r_obs_rounded) %>% 
+  mutate(posterior = posterior_unstd / sum(posterior_unstd))
+
+tmp
 ```
+
+
 
 ```{r}
-tmp2 <- tmp %>% 
-  group_by(n, r_calc_rounded) %>% 
-  mutate(p_posterior = p / sum(p))
-```
-
-```{r}
-tmp2 %>% 
-  filter(r_calc_rounded == 0.2, n == 20) %>% 
-  ggplot(aes(r_actual, p_posterior)) + 
-  geom_line()
+tmp %>% 
+  filter(as.character(r_obs_rounded) %in% as.character(c(0.3, 0.5, 0.7))) %>% 
+  ggplot(aes(r_true, posterior, color = factor(n))) + 
+  geom_line() +
+  facet_wrap(~r_obs_rounded, ncol = 1)
 ```
 
 
 
-TODO exaplin gaming metrics: for example choosing best 3 correlations out of 20
+
 
 mention that this also holds for other metrics, not only correlation
 
