@@ -11,51 +11,47 @@ output:
     self_contained: false
 ---
 
-```{r}
-library(lemon)
-knit_print.data.frame <- lemon_print
-knit_print.table <- lemon_print
-knit_print.grouped_df <- lemon_print 
-knit_print.tibble <- lemon_print
-knit_print.tbl <- lemon_print
+```{r, echo=FALSE}
+# library(lemon)
+# knit_print.data.frame <- lemon_print
+# knit_print.table <- lemon_print
+# knit_print.grouped_df <- lemon_print 
+# knit_print.tibble <- lemon_print
+# knit_print.tbl <- lemon_print
 options(digits=2)
 ggplot2::theme_set(ggplot2::theme_classic())
-
-knitr::opts_chunk$set(cache = TRUE)
 ```
 
 
-Once upon a time I worked as a student data scientist for a start-up where we wanted to predict a person's bio-marker based on the measurement we did on them. In theory, these measurements (biomarkers) should correlate with the thing we wanted to predict but: 
+Once upon a time I worked as a student data scientist for a start-up where we wanted to predict a person's biomarker based on other biomarkers that were easier to measure. In theory, these measurements should correlate with the biomarker we wanted to predict.
 
 > In theory, theory and practice are the same. In practice, they are not. - Unknown
 
-So we had more than 10 features per person and only about, let's say 30 persons. We often found correlations but then got disappointed after additional measurements when the correlation dissapeared. It was like a cat chasing its tail. I got to suspect, that we were getting correlations out of a thin air. My plan was to do a simulation to check how probable is to get correlations as they were ours by chance. I left the job before I got to do the simulation.
+Our data consisted of, let's say, 30 subject, each with 20 features that were extracted from measured biomarkers and the biomarker we wanted to predict. We often found correlations, got all hyped up, and disappointed after they disappeared on the new subject's data. I suspected that we were getting correlations just by chance. I knew this happens but to what degree? Would it be possible to get so called [moderate or even high degree](https://www.statisticssolutions.com/free-resources/directory-of-statistical-analyses/pearsons-correlation-coefficient/) of spurious correlation? My plan was to do a simulation to check that. I left the job before I got to do the simulation.
 
-Until, a few days ago I came across the video by Nassim Nicholas Taleb, doing and explain exactly the thing I planned to do. You can watch it on [Youtube](https://wwwyoutube.com/watch?v=fb921ZrM6h0). 
+Until, a few weeks ago, I came across [the video](https://wwwyoutube.com/watch?v=fb921ZrM6h0) by Nassim Nicholas Taleb, doing and explaining the thing I planned to do.
 
-## How to fool yourself with correlation 101
+## How to fool yourself with correlation
 
-Let's simulate the situation we were probably in. Let's say we measured 25 subjects and then calculated 15 features for each one. Each one of the features, including the outcome, is random^[Normally distributed with the mean 0 and standard deviation 1.] and independent from others.
+Let's simulate the situation we were probably in. Let's say we measured 30 subjects and then calculated 20 features for each one. All features, including the outcome, are random^[Normally distributed with the mean 0 and standard deviation 1.] and independent.
 
 ```{r}
 library(dplyr)
 library(tidyr)
 library(ggplot2)
 
-n_features <- 15
-n_subjects <- 25
+n_features <- 20
+n_subjects <- 30
 
 subject_data <- as_tibble(
   replicate(n_features + 1, rnorm(n_subjects)), 
   .name_repair = ~c(paste0("x", as.character(1:n_features)), "y")
 )
 
-subject_data %>% 
-  select(x1, x2, x3, x4, x5, y) %>% 
-  head()
+subject_data
 ```
 
-As you can see above, each row presents one subject. Columns `x1` to `x15` (only the first 5 is displayed) present features and `y` a value we want to predict. Let's calculate correlation correlation of each future in respect to `y`. In reality, they should be zero, but are they? 
+As we can see above, each row presents one subject. Columns `x1` to `x20` present features and `y` the value we want to predict. Let's calculate [Pearson correlation coefficient](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient), also known as `r`, between each feature and `y`. In reality, they should be zero, but are they? 
 
 ```{r}
 corrs_with_y <- subject_data %>% 
@@ -67,12 +63,10 @@ corrs_with_y <- subject_data %>%
 corrr::fashion(corrs_with_y)
 ```
 
-We are getting quite decent (at least that's what I thought) correlations out of the thin air! Look at the plots below, displaying 3 best spurious correlations. We often see something like this in the news, even scientific publications! As Taleb says: 
-
-> The point is not that the correlation is not causation, is that very often correlation is not correlation.
+We are getting decent correlations out of a thin air! Look at the plots below, displaying 3 best spurious correlations.  
 
 
-```{r, echo=FALSE}
+```{r}
 specify_decimal <- function(x, k) trimws(format(round(x, k), nsmall=k))
 
 features_with_highest_corrs <- corrs_with_y %>% 
@@ -88,11 +82,15 @@ subject_data %>%
   facet_grid(~forcats::fct_reorder(label, desc(abs(r))))
 ```
 
-TODO exaplin gaming metrics: for example choosing best 3 correlations out of 20
+We often see something like this in the news, even scientific publications! A person analyzing the data produces multiple correlations and then [cherry picks](https://en.wikipedia.org/wiki/Cherry_picking) the best ones that signal that she found something meaningful. For example, one could correlate impact of different foods on life longevity. If your dataset consists from a lot of foods, you will for sure find a correlation. But this correlation won't be causation. It won't even be correlation!
 
-## Simulation: Getting spurious correlations
+> The point is not that the correlation is not causation, is that very often correlation is not correlation. - Nassim Nicholas Taleb
 
-How often can totally random data produce "high" correlations. Let's look at the distribution of correlations of two independent datasets with `n_subjects` data points.
+Metrics, including correlations, are random variables. Since people have an incentive (in science: [publish the results](https://en.wikipedia.org/wiki/Publication_bias)) they will (often unintentionally) game the metric by finding the higher bound of it. 
+
+## Simulation 1: Getting spurious correlations by chance
+
+How often can independent data produce good-looking correlations? Let's look at the distribution of correlations of two independent datasets with `{r} n_subjects` data points.
 
 ```{r}
 simulated_correlations <- replicate(10000, cor(rnorm(n_subjects), rnorm(n_subjects)))
@@ -106,7 +104,7 @@ tibble(r = simulated_correlations) %>%
   )
 ```
 
-This looks like the most normal function I've seen. See the table below what's the probability to get higher than something correlation.
+This looks like the most normal histogram I've seen, the normal function fits perfectly. See the table below what's the probability to get correlation higher than some value.
 
 ```{r}
 tibble(
@@ -119,7 +117,7 @@ tibble(
   select(r_threshold, p_above_threshold)
 ```
 
-That's not little! Remember the time when you were all enthusiastic about 0.3 correlation in your data. Below let's see how standard deviation and 95th percentile change with sample size.
+That's not little! Remember the time when we were all enthusiastic about 0.4 correlation in data. Let's calculate how standard deviation and 95th percentile of correlation coefficient distribution change with sample size.
 
 ```{r}
 df <- crossing(
@@ -133,29 +131,31 @@ df %>%
   group_by(n) %>% 
   summarise(
     sd = sd(r), 
-    p90 = quantile(abs(r), 0.95)
+    p95 = quantile(abs(r), 0.95)
   ) %>% 
   ggplot(aes(x = n)) + 
   geom_line(aes(y = sd)) + 
-  geom_line(aes(y = p90), linetype = "dashed") + 
+  geom_line(aes(y = p95), linetype = "dashed") + 
   expand_limits(y = 0)
 ```
 
-The values are dropping as $sqrt(n)$. 
+<!-- The values are dropping as $sqrt(n)$.  -->
 
-The funny thing is, since now you know mean and standard deviation describing distribution of pearson correlation coefficients you can actually hypotesize test it. You can calculate `p` value, telling you probability that such `r` could be generated if there's no correlation and then reject the null hypothesis that it comes from distribution where actual r = 0 if p < 0.05. 
+Since we know the mean and standard deviation describing distribution of pearson correlation coefficients we could use it for hypotesis testing. `p` value would tell you probability that such or more extreme `r` could be generated if there's no correlation and then reject the null hypothesis that it comes from distribution where actual r = 0 if p < 0.05. 
 
-But this might not be the answer we are looking for. What if we are looking for `P(r > some value|observed r)`? Then, my friend, we have to turn to our friend Bayes.
+But this might not be the answer we are looking for. What if we are looking for `P(r > some value|observed r)`? What would be the distributed of true r values given our observed one? Once again, Bayes to the rescue!
 
-## Bayesian party
+## Simulation 2: Bayesian remedy for fake correlations
 
-Right now, we were calculating likelihood distribution of $P( r_{obs} | r_{true})$. But we interested in posterior $P( r_{true} | r_{obs})$ - what's the distribution of actual $r$ given you observed `r=0.5`, for example?
+Right now, we were calculating likelihood distribution of $P( r_{obs} | r_{true})$. But we are interested in posterior $P( r_{true} | r_{obs})$ - what's the distribution of actual $r$ given you observed `r=0.5`, for example?
+
+First, we match all combinations of sample size `n`, `r_true`, actual correlation coefficient, and `k`, index of simulation. For each row we generate vector of values `x` that has a length `n`. `y` is generated from `x` and `r_true` with the `rnorm_pre` from [faux](https://debruine.github.io/faux/) package. This function makes a normal vector (`y`) that is correlated to existing vector (`x`). But here's the trick, although it should be correlated with `r_true`, the actual correlation varies - so we calculate it again from `x` and `y` to get `r_obs`. 
 
 ```{r}
-correlations_positive_only <- tidyr::crossing(
-  n = as.integer(c(10, 50, 100, 1000)),
-  r_true = seq(0, 0.95, by = 0.05),
-  k = 1:1000 # TODO should be 1000
+correlations_positive_only <- crossing(
+  n = as.integer(c(10, 100, 1000)),
+  k = 1:10,
+  r_true = seq(0, 0.9, by = 0.05)
 ) %>% 
   rowwise() %>% 
   mutate(
@@ -163,6 +163,7 @@ correlations_positive_only <- tidyr::crossing(
     y = list(faux::rnorm_pre(x, r = r_true)),
     r_obs = cor(x, y)
   ) %>% 
+  ungroup() %>% 
   select(-x, -y)
 
 df <- bind_rows(
@@ -172,19 +173,19 @@ df <- bind_rows(
       mutate(across(c(r_true, r_obs), `-`))
   )
 
-df
+head(df)
 ```
-
-This is how we can get likelihood distribution, the same as we had above for $r_{true}=0$. Now let's do it for different parameters. 
+So for example, to get the same of $P( r_{obs} | r_{true})$ as we had before for $r_{true}=0$, now we can calculate that only from filtering `df` with appropriate $r_{true}$ and sample size `n`.
 
 ```{r}
 df %>% 
     filter(r_true == 0.5, n == 100) %>% 
     ggplot(aes(r_obs)) + 
-    geom_density()
+    geom_histogram(bins = 20)
 ```
 
 Let's go to Bayesian formula again. $$P(r_{true} | r_{obs}) = P(r_{true}) P( r_{obs} | r_{true})$$. As usual, we will drop the bottom part. First for each $n$ and $r_{true}$ what's the probability it will generate $r_{obs}$. We bin $r_{obs}$ so we can actually calculate probabilities for it. This technique is called grid approximation - you can read more about it on my [Intuitive Bayesian Inference](https://mihagazvoda.com/posts/2020-11-24-bayesian-updating/) blog post. 
+TODO Also mention priors.
 
 ```{r}
 tmp <- df %>% 
@@ -209,7 +210,8 @@ tmp %>%
   filter(as.character(r_obs_rounded) %in% as.character(c(0.3, 0.5, 0.7))) %>% 
   ggplot(aes(r_true, posterior, color = factor(n))) + 
   geom_line() +
-  facet_wrap(~r_obs_rounded, ncol = 1)
+  facet_grid(~r_obs_rounded) + 
+  scale_color_viridis_d()
 ```
 
 
